@@ -106,6 +106,14 @@ Resources:
       Tracing: Active
       Policies:
         - AWSXrayWriteOnlyAccess
+      Events:
+        objectStore6A12D98C:
+          Type: S3
+          Properties:
+            Bucket: !Ref objectStore6A12D98C
+            Events:
+              - s3:ObjectCreated:*
+              - s3:ObjectRemoved:*
     Metadata:
       StackeryName: triggerOnUploadVideoStackery
   functionF9A32476:
@@ -123,6 +131,14 @@ Resources:
       Tracing: Active
       Policies:
         - AWSXrayWriteOnlyAccess
+      Events:
+        objectStore3B0DC7B6:
+          Type: S3
+          Properties:
+            Bucket: !Ref objectStore3B0DC7B6
+            Events:
+              - s3:ObjectCreated:*
+              - s3:ObjectRemoved:*
     Metadata:
       StackeryName: triggerOnThumbnailCreationStackery
 Parameters:
