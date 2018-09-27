@@ -1,3 +1,134 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Description: Video processing app with AWS Fargate using Stackery
+Resources:
+  objectStore6A12D98C:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-objectstore6a12d98c
+    Metadata:
+      StackeryName: rg-stackery-video-files
+  objectStore3B0DC7B6:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-objectstore3b0dc7b6
+    Metadata:
+      StackeryName: rg-stackery-thumbnails
+  dockerTask4259BAF6:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ContainerDefinitions:
+        - Image: rupakg/docker-ffmpeg-thumb:latest
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref dockerTask4259BAF6LogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: rupakg-docker-ffmpeg-thumb-latest
+          Name: 0
+          Environment:
+            - Name: AWS_REGION
+              Value: us-east-1
+            - Name: INPUT_VIDEO_FILE_URL
+              Value: https://s3.amazonaws.com/your-s3-bucket-name/test.mp4
+            - Name: OUTPUT_S3_PATH
+              Value: your-s3-bucket-name/your-thumbnail-folder-name
+            - Name: OUTPUT_THUMBS_FILE_NAME
+              Value: test.png
+            - Name: POSITION_TIME_DURATION
+              Value: 00:01
+      Cpu: 256
+      ExecutionRoleArn: !GetAtt dockerTask4259BAF6ExecutionRole.Arn
+      Memory: 512
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn: !GetAtt dockerTask4259BAF6TaskRole.Arn
+      Volumes: []
+    DependsOn: dockerTask4259BAF6LogGroup
+    Metadata:
+      StackeryName: stackery-video-to-thumb-task-def
+  dockerTask4259BAF6LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /stackery/task/${AWS::StackName}-dockerTask4259BAF6/rupakg-docker-ffmpeg-thumb-latest
+  dockerTask4259BAF6ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${AWS::StackName}-DockerTaskExecutionRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        - PolicyName: DownloadDockerImagesFromECR
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub arn:aws:logs:*:*:log-group:/stackery/task/${AWS::StackName}-*
+              - Effect: Allow
+                Action:
+                  - ecr:GetAuthorizationToken
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:BatchGetImage
+                Resource: '*'
+  dockerTask4259BAF6TaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${AWS::StackName}-DockerTaskTaskRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+          Action: sts:AssumeRole
+  function17279F64:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-function17279F64
+      Description: !Sub
+        - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Function ${ResourceName}
+        - ResourceName: triggerOnUploadVideoStackery
+      CodeUri: src/triggerOnUploadVideoStackery
+      Handler: index.handler
+      Runtime: nodejs8.10
+      MemorySize: 512
+      Timeout: 30
+      Tracing: Active
+      Policies:
+        - AWSXrayWriteOnlyAccess
+    Metadata:
+      StackeryName: triggerOnUploadVideoStackery
+  functionF9A32476:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-functionF9A32476
+      Description: !Sub
+        - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Function ${ResourceName}
+        - ResourceName: triggerOnThumbnailCreationStackery
+      CodeUri: src/triggerOnThumbnailCreationStackery
+      Handler: index.handler
+      Runtime: nodejs8.10
+      MemorySize: 512
+      Timeout: 30
+      Tracing: Active
+      Policies:
+        - AWSXrayWriteOnlyAccess
+    Metadata:
+      StackeryName: triggerOnThumbnailCreationStackery
+Parameters:
+  StackeryStackTagName:
+    Type: String
+    Description: Stack Name (injected by Stackery at deployment time)
+  StackeryEnvironmentTagName:
+    Type: String
+    Description: Environment Name (injected by Stackery at deployment time)
