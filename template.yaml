@@ -25,7 +25,7 @@ Resources:
               awslogs-group: !Ref dockerTask4259BAF6LogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: rupakg-docker-ffmpeg-thumb-latest
-          Name: 0
+          Name: video-to-thumb-container
           Environment:
             - Name: AWS_REGION
               Value: us-east-1
