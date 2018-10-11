@@ -145,6 +145,8 @@ Resources:
                 - !GetAtt dockerTask4259BAF6TaskRole.Arn
         - S3CrudPolicy:
             BucketName: !Ref objectStore3B0DC7B6
+        - S3CrudPolicy:
+            BucketName: !Ref objectStore6A12D98C
       Events:
         objectStore6A12D98C:
           Type: S3
@@ -161,6 +163,8 @@ Resources:
             - !Ref DefaultVPCSubnets
           BUCKET_NAME: !Ref objectStore3B0DC7B6
           BUCKET_ARN: !GetAtt objectStore3B0DC7B6.Arn
+          BUCKET_NAME_2: !Ref objectStore6A12D98C
+          BUCKET_ARN_2: !GetAtt objectStore6A12D98C.Arn
     Metadata:
       StackeryName: triggerOnUploadVideoStackery
   functionF9A32476:
