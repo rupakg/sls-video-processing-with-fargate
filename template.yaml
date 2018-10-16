@@ -193,7 +193,7 @@ Resources:
   thumbOutputBucketPolicy: 
     Type: AWS::S3::BucketPolicy
     Properties: 
-      Bucket: !Ref objectStore16B4761A
+      Bucket: !Ref objectStore3B0DC7B6
       PolicyDocument: 
         Statement: 
           - 
@@ -206,7 +206,7 @@ Resources:
                 - 
                   - "arn:aws:s3:::"
                   - 
-                    Ref: "objectStore16B4761A"
+                    Ref: "objectStore3B0DC7B6"
                   - "/*"
             Principal: "*"      
 Parameters:
