@@ -190,6 +190,25 @@ Resources:
               - s3:ObjectRemoved:*
     Metadata:
       StackeryName: triggerOnThumbnailCreationStackery
+  thumbOutputBucketPolicy: 
+    Type: AWS::S3::BucketPolicy
+    Properties: 
+      Bucket: !Ref objectStore16B4761A
+      PolicyDocument: 
+        Statement: 
+          - 
+            Action: 
+              - "s3:GetObject"
+            Effect: "Allow"
+            Resource: 
+              Fn::Join: 
+                - ""
+                - 
+                  - "arn:aws:s3:::"
+                  - 
+                    Ref: "objectStore16B4761A"
+                  - "/*"
+            Principal: "*"      
 Parameters:
   StackeryStackTagName:
     Type: String
