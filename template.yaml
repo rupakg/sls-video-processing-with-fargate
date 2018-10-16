@@ -6,12 +6,14 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub ${AWS::StackName}-objectstore6a12d98c
+      AccessControl: PublicRead
     Metadata:
       StackeryName: rg-stackery-video-files
   objectStore3B0DC7B6:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub ${AWS::StackName}-objectstore3b0dc7b6
+      AccessControl: PublicRead
     Metadata:
       StackeryName: rg-stackery-thumbnails
   dockerTask4259BAF6:
