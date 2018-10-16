@@ -21,12 +21,6 @@ module.exports.handler = function handler (event, context, callback) {
   const key = event.Records[0].s3.object.key;
   const eventName = event.Records[0].eventName;
 
-  // only process S3 ObjectCreated events
-  if (!eventName.includes('ObjectCreated:')) {
-    callback(null, {});
-    return;
-  }
-
   console.log(JSON.stringify(event));
   console.log(`A new video file '${key}' was uploaded to '${bucket}' for processing.`);
 
