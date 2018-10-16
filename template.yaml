@@ -156,7 +156,6 @@ Resources:
             Bucket: !Ref objectStore6A12D98C
             Events:
               - s3:ObjectCreated:*
-              - s3:ObjectRemoved:*
       Environment:
         Variables:
           DOCKER_TASK_ARN: !Ref dockerTask4259BAF6
@@ -189,7 +188,6 @@ Resources:
             Bucket: !Ref objectStore3B0DC7B6
             Events:
               - s3:ObjectCreated:*
-              - s3:ObjectRemoved:*
     Metadata:
       StackeryName: triggerOnThumbnailCreationStackery
   thumbOutputBucketPolicy: 
