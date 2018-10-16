@@ -57,7 +57,7 @@ var runThumbnailGenerateTask = (s3_video_url, thumbnail_file, frame_pos) => {
     overrides: {
       containerOverrides: [
         {
-          name: '0',
+          name: 'video-to-thumb-container',
           environment: [
             {
               name: 'INPUT_VIDEO_FILE_URL',
